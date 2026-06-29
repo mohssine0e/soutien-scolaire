@@ -1,0 +1,20 @@
+# Pour utiliser PostgreSQL au lieu de H2 :
+# 1) Renommez ce fichier en application.properties (ou lancez avec --spring.profiles.active=postgres
+#    et renommez en application-postgres.properties)
+# 2) Adaptez l'URL, le user et le password a votre base locale
+# 3) Creez au prealable la base : CREATE DATABASE soutiendb;
+
+spring.datasource.url=jdbc:postgresql://localhost:5432/soutiendb
+spring.datasource.driver-class-name=org.postgresql.Driver
+spring.datasource.username=postgres
+spring.datasource.password=postgres
+
+spring.jpa.database-platform=org.hibernate.dialect.PostgreSQLDialect
+spring.jpa.hibernate.ddl-auto=update
+spring.jpa.show-sql=false
+spring.jpa.open-in-view=false
+
+server.port=8080
+
+jwt.secret=cZmF6cmlfc291dGllbl9zY29sYWlyZV9zZWNyZXRfa2V5XzIwMjZfdHJlc19sb25ndWVfY2xl
+jwt.expiration-ms=86400000

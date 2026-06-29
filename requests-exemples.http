@@ -1,0 +1,122 @@
+### Variables (adapter selon environnement)
+@host = http://localhost:8080
+
+### ===================== AUTH =====================
+
+### Inscription d'un eleve
+POST {{host}}/api/auth/register
+Content-Type: application/json
+
+{
+  "nom": "Karim Eleve",
+  "email": "karim.eleve@test.ma",
+  "password": "password123",
+  "role": "ELEVE"
+}
+
+### Inscription d'un enseignant
+POST {{host}}/api/auth/register
+Content-Type: application/json
+
+{
+  "nom": "Nadia Enseignante",
+  "email": "nadia.enseignante@test.ma",
+  "password": "password123",
+  "role": "ENSEIGNANT"
+}
+
+### Connexion (compte de demo deja cree par le seeder)
+POST {{host}}/api/auth/login
+Content-Type: application/json
+
+{
+  "email": "eleve@soutien.ma",
+  "password": "password123"
+}
+
+### ===================== MATIERES =====================
+
+### Liste des matieres (necessite un token, n'importe quel role)
+GET {{host}}/api/subjects
+Authorization: Bearer {{token_eleve}}
+
+### Creer une matiere (ADMIN uniquement)
+POST {{host}}/api/subjects
+Authorization: Bearer {{token_admin}}
+Content-Type: application/json
+
+{
+  "nom": "Chimie",
+  "description": "Chimie organique et inorganique"
+}
+
+### ===================== DEMANDES DE SOUTIEN =====================
+
+### L'eleve cree une demande
+POST {{host}}/api/requests
+Authorization: Bearer {{token_eleve}}
+Content-Type: application/json
+
+{
+  "subjectId": 1,
+  "description": "J'ai besoin d'aide sur les suites numeriques."
+}
+
+### L'enseignant consulte les demandes disponibles
+GET {{host}}/api/requests/disponibles
+Authorization: Bearer {{token_enseignant}}
+
+### L'enseignant s'affecte a la demande n°1
+POST {{host}}/api/requests/1/affecter
+Authorization: Bearer {{token_enseignant}}
+
+### Changer le statut d'une demande (passer EN_COURS -> TERMINEE)
+PATCH {{host}}/api/requests/1/statut
+Authorization: Bearer {{token_enseignant}}
+Content-Type: application/json
+
+{
+  "status": "TERMINEE"
+}
+
+### Mes demandes (eleve, enseignant ou admin selon le token utilise)
+GET {{host}}/api/requests/mes-demandes
+Authorization: Bearer {{token_eleve}}
+
+### Voir une demande precise
+GET {{host}}/api/requests/1
+Authorization: Bearer {{token_eleve}}
+
+### ===================== MESSAGERIE =====================
+
+### L'eleve envoie un message sur la demande n°1
+POST {{host}}/api/requests/1/messages
+Authorization: Bearer {{token_eleve}}
+Content-Type: application/json
+
+{
+  "contenu": "Bonjour, merci d'avoir pris ma demande, quand peut-on commencer ?"
+}
+
+### L'enseignant repond
+POST {{host}}/api/requests/1/messages
+Authorization: Bearer {{token_enseignant}}
+Content-Type: application/json
+
+{
+  "contenu": "Bonjour, on peut commencer demain a 18h, ca te convient ?"
+}
+
+### Historique des messages de la demande n°1
+GET {{host}}/api/requests/1/messages
+Authorization: Bearer {{token_eleve}}
+
+### ===================== EQUIVALENT CURL =====================
+# curl -X POST http://localhost:8080/api/auth/login \
+#   -H "Content-Type: application/json" \
+#   -d '{"email":"eleve@soutien.ma","password":"password123"}'
+#
+# curl -X POST http://localhost:8080/api/requests \
+#   -H "Authorization: Bearer <TOKEN>" \
+#   -H "Content-Type: application/json" \
+#   -d '{"subjectId":1,"description":"Besoin d aide en maths"}'
